@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Items = require("../models/items");
 
 exports.signup = (req, res, next) => {
   console.log("signup requset");
@@ -40,7 +41,7 @@ exports.login = (req, res, next) => {
       if (user.password === password) {
         res.status(200).json({
           message: "login success",
-          userId: loadedUser._id.toString(),
+          userId: user._id.toString(),
         });
       } else {
         const error = new Error("password is wrong");
@@ -54,4 +55,28 @@ exports.login = (req, res, next) => {
       }
       next(err);
     });
+};
+
+exports.giveItem = async (req, res, next) => {
+  console.log("give Item");
+  const itemId = req.body.itemId;
+  const userId = req.body.userId;
+  try {
+    const user = await User.findById(userId);
+    const item = await Items.findById(itemId);
+    user.items.push(item);
+    user.score += item.score;
+    await user.save();
+    res.status(401).json({ message: "item added and score update " });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.leaderboard = async (req, res, next) => {
+  const users = await User.find().sort({ score: -1 });
+  res.json({ users: users });
 };
