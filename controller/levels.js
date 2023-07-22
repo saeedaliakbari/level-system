@@ -4,44 +4,50 @@ const Items = require("../models/items");
 const items = require("../models/items");
 const levels = require("../models/levels");
 
-exports.getLevels = (req, res, next) => {
+exports.getLevels = async (req, res, next) => {
   console.log("requset get levels");
-  Levels.find().then((levels) => {
+  try {
+    const levels = await Levels.find();
     if (!levels) {
       const error = new Error("levels not exsits ");
       throw error;
     }
     res.status(401).json({ levels: levels });
-  });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
 
-exports.addLevel = (req, res, next) => {
+exports.addLevel = async (req, res, next) => {
   console.log("add level");
   const name = req.body.name;
   const userId = req.body.userId;
-  User.findOne({ _id: userId })
-    .then((user) => {
-      if (!user) {
-        const error = new Error("user not found ");
-        throw error;
-      }
-      if (!user.isAdmin) {
-        const error = new Error("user not admin ");
-        throw error;
-      }
-      const level = new Levels({ name: name, creator: userId });
-      return level.save();
-    })
-    .then((level) => res.json({ message: "add level", levelId: level._id }))
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      const error = new Error("user not found ");
+      throw error;
+    }
+    if (!user.isAdmin) {
+      const error = new Error("user not admin ");
+      throw error;
+    }
+    const level = new Levels({ name: name, creator: userId });
+    const result = await level.save();
+
+    res.json({ message: "add level", levelId: result._id });
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-exports.addItem = (req, res, next) => {
+exports.addItem = async (req, res, next) => {
   const name = req.body.name;
   const goal = req.body.goal;
   const score = req.body.score;
@@ -52,27 +58,21 @@ exports.addItem = (req, res, next) => {
     score: score,
     levelId: levelId,
   });
-  item
-    .save()
-    .then((item) => {
-      return levels.findById(levelId);
-    })
-    .then((level) => {
-      level.items.push(item);
-      return level.save();
-    })
-    .then((reuslt) => {
-      res.status(201).json({
-        message: "item added",
-        item: item,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+  try {
+    const saveItem = await item.save();
+    const level = await levels.findById(levelId);
+    level.items.push(item);
+    const result = await level.save();
+    res.status(201).json({
+      message: "item added",
+      item: item,
     });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
 
 exports.getItems = async (req, res, next) => {
@@ -97,4 +97,3 @@ exports.getItems = async (req, res, next) => {
     next(error);
   }
 };
-
