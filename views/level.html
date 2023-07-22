@@ -6,26 +6,32 @@
     <title>Users System</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <header>
       <ul>
         <li><a href="/views/index.html">Leaderboard</a></li>
         <li><a href="/views/level.html">show level</a></li>
-        <li><a href="/views/login.html">login</a></li>
+         <li><a href="/views/login.html">login</a></li>
       </ul>
     </header>
-    <h1>Leaderboard</h1>
+    <h1>Levels</h1>
     <div id="data"></div>
 
     <script>
-      // Make a request to the RESTful API
-      fetch("http://localhost:8080/auth/leaderboard")
-        .then((response) => response.json()) // Parse the response as JSON
+      fetch("http://localhost:8080/levels/")
+        .then((response) => response.json())
         .then((data) => {
-          // Display the data on the web page
           const dataDiv = document.getElementById("data");
-          data.users.forEach((user) => {
-            dataDiv.innerHTML += `<p>name : ${user.name} , score: ${user.score}</p>`;
+          data.levels.forEach((level) => {
+            fetch(`http://localhost:8080/levels/Items/${level._id}`)
+              .then((response) => response.json())
+              .then((data) => {
+                dataDiv.innerHTML += `<p>name : ${level.name} </p>`;
+                data.items.forEach((item) => {
+                  dataDiv.innerHTML += `<p>name : ${item.name} , goal : ${item.goal} ,score : ${item.score} </p>`;
+                });
+              });
           });
         })
         .catch((error) => console.error(error)); // Log any errors to the console

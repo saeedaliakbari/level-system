@@ -1,60 +1,56 @@
 const User = require("../models/user");
 const Items = require("../models/items");
 
-exports.signup = (req, res, next) => {
+exports.signup = async (req, res, next) => {
   console.log("signup requset");
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        const user = new User({ name, email, password });
-        return user.save();
-      } else {
-        const error = new Error("email already exsits ");
-        throw error;
-      }
-    })
-    .then((result) => {
-      res.status(401).json({ message: "User created", userId: result._id });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+  try {
+    const user = User.findOne({ email: email });
+    if (!user) {
+      const user = new User({ name, email, password });
+      const result = await user.save();
+    } else {
+      const error = new Error("email already exsits ");
+      throw error;
+    }
+    res.status(401).json({ message: "User created", userId: result._id });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
-exports.login = (req, res, next) => {
+exports.login = async (req, res, next) => {
   console.log("login request");
   const email = req.body.email;
   const password = req.body.password;
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        const error = new Error("user not found");
-        error.statusCode = 401;
-        throw error;
-      }
-      console.log(user);
-      if (user.password === password) {
-        res.status(200).json({
-          message: "login success",
-          userId: user._id.toString(),
-        });
-      } else {
-        const error = new Error("password is wrong");
-        error.statusCode = 401;
-        throw error;
-      }
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      const error = new Error("user not found");
+      error.statusCode = 401;
+      throw error;
+    }
+    console.log(user);
+    if (user.password === password) {
+      res.status(200).json({
+        message: "login success",
+        userId: user._id.toString(),
+      });
+    } else {
+      const error = new Error("password is wrong");
+      error.statusCode = 401;
+      throw error;
+    }
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
 
 exports.giveItem = async (req, res, next) => {

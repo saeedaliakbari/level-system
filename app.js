@@ -3,7 +3,6 @@ const authRoutes = require("./routes/auth");
 const levelsRoutes = require("./routes/levels");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
 const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -15,6 +14,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+
 app.use("/auth", authRoutes);
 app.use("/levels", levelsRoutes);
 app.use((error, req, res, next) => {
