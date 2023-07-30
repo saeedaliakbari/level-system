@@ -1,8 +1,8 @@
-const express = require("express");
-const authRoutes = require("./routes/auth");
-const levelsRoutes = require("./routes/levels");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+import express from "express";
+import authRoutes from "./routes/auth.js";
+import levelsRoutes from "./routes/levels.js";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
 const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {

@@ -1,9 +1,14 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const levelsController = require("../controller/levels");
+import {
+  getLevels,
+  addItem,
+  addLevel,
+  getItems,
+} from "../controller/levels.js";
 
-router.get("", levelsController.getLevels);
-router.post("/addlevel", levelsController.addLevel);
-router.post("/addItem", levelsController.addItem);
-router.get("/Items/:levelId", levelsController.getItems);
-module.exports = router;
+router.get("", getLevels);
+router.post("/addlevel", addLevel);
+router.post("/addItem", addItem);
+router.get("/Items/:levelId", getItems);
+export default router;

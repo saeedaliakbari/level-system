@@ -1,10 +1,11 @@
-const express = require("express");
+// const express = require("express");
+import express from "express";
 const router = express.Router();
-const authController = require("../controller/auth");
+import { signup, login, giveItem, leaderboard } from "../controller/auth.js";
 
-router.put("/signup", authController.signup);
-router.post("/login", authController.login);
-router.put("/giveItem", authController.giveItem);
-router.get("/leaderboard", authController.leaderboard);
+router.put("/signup", signup);
+router.post("/login", login);
+router.put("/giveItem", giveItem);
+router.get("/leaderboard", leaderboard);
 
-module.exports = router;
+export default router;

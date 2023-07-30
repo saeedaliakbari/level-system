@@ -1,10 +1,8 @@
-const Levels = require("../models/levels");
-const User = require("../models/user");
-const Items = require("../models/items");
-const items = require("../models/items");
-const levels = require("../models/levels");
+import { Levels } from "../models/levels.js";
+import { User } from "../models/user.js";
+import { Items } from "../models/items.js";
 
-exports.getLevels = async (req, res, next) => {
+export const getLevels = async (req, res, next) => {
   console.log("requset get levels");
   try {
     const levels = await Levels.find();
@@ -21,7 +19,7 @@ exports.getLevels = async (req, res, next) => {
   }
 };
 
-exports.addLevel = async (req, res, next) => {
+export const addLevel = async (req, res, next) => {
   console.log("add level");
   const name = req.body.name;
   const userId = req.body.userId;
@@ -47,7 +45,7 @@ exports.addLevel = async (req, res, next) => {
   }
 };
 
-exports.addItem = async (req, res, next) => {
+export const addItem = async (req, res, next) => {
   const name = req.body.name;
   const goal = req.body.goal;
   const score = req.body.score;
@@ -60,7 +58,7 @@ exports.addItem = async (req, res, next) => {
   });
   try {
     const saveItem = await item.save();
-    const level = await levels.findById(levelId);
+    const level = await Levels.findById(levelId);
     level.items.push(item);
     const result = await level.save();
     res.status(201).json({
@@ -75,7 +73,7 @@ exports.addItem = async (req, res, next) => {
   }
 };
 
-exports.getItems = async (req, res, next) => {
+export const getItems = async (req, res, next) => {
   const levelId = req.params.levelId;
   console.log(levelId);
   try {

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const itemsSchema = new Schema({
@@ -7,5 +7,4 @@ const itemsSchema = new Schema({
   score: { type: Number, required: true },
   levelId: { type: Schema.Types.ObjectId, ref: "Level" },
 });
-
-module.exports = mongoose.model("Items", itemsSchema);
+export const Items = mongoose.model("Items", itemsSchema);

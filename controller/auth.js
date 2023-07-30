@@ -1,7 +1,7 @@
-const User = require("../models/user");
-const Items = require("../models/items");
+import { User } from "../models/user.js";
+import { Items } from "../models/items.js";
 
-exports.signup = async (req, res, next) => {
+export const signup = async (req, res, next) => {
   console.log("signup requset");
   const name = req.body.name;
   const email = req.body.email;
@@ -23,7 +23,7 @@ exports.signup = async (req, res, next) => {
     next(error);
   }
 };
-exports.login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   console.log("login request");
   const email = req.body.email;
   const password = req.body.password;
@@ -53,7 +53,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.giveItem = async (req, res, next) => {
+export const giveItem = async (req, res, next) => {
   console.log("give Item");
   const itemId = req.body.itemId;
   const userId = req.body.userId;
@@ -72,7 +72,7 @@ exports.giveItem = async (req, res, next) => {
   }
 };
 
-exports.leaderboard = async (req, res, next) => {
+export const leaderboard = async (req, res, next) => {
   const users = await User.find().sort({ score: -1 });
   res.json({ users: users });
 };

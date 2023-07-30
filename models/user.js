@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -9,5 +9,4 @@ const userSchema = new Schema({
   score: { type: Number, default: 0 },
   items: [{ type: Schema.Types.ObjectId, ref: "Items" }],
 });
-
-module.exports = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
